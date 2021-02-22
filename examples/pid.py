@@ -57,6 +57,7 @@ try:
         args.kp, args.ki, args.kd, args.target, get_cpu_temp(), time.time()
     )
 
+    iteration = 0
     while True:
         state = get_cpu_temp()
         t = time.time()
@@ -64,13 +65,15 @@ try:
         duty_ratio = controller.next(t, state)
         fanshim.set_fan_pwm(duty_ratio)
 
-        if args.verbose:
+        # TODO Export these metrics to be scraped by Prometheus
+        if iteration % 10 == 0:
             print(
                 "Current: {:05.02f} "
                 "Target: {:05.02f} "
                 "Duty ratio: {}".format(state, args.target, duty_ratio)
             )
 
+        iteration += 1
         time.sleep(args.rate)
 
 except KeyboardInterrupt:
