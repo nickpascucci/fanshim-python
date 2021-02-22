@@ -31,6 +31,8 @@ class FanShim():
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self._pin_fancontrol, GPIO.OUT)
 
+        self._pwm = GPIO.PWM(self._pin_fancontrol, 100)
+
         if not self._disable_button:
             GPIO.setup(self._pin_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
@@ -113,8 +115,16 @@ class FanShim():
         :param fan_state: True/False for on/off
 
         """
-        GPIO.output(self._pin_fancontrol, True if fan_state else False)
-        return True if fan_state else False
+        self.set_fan_pwm(100.0 if fan_state else 0.0)
+        return fan_state
+
+    def set_fan_pwm(self, duty_ratio):
+        """Set the fan duty ratio.
+
+        :param duty_ratio: float 0.0 to 100.0
+
+        """
+        self._pwm.ChangeDutyCycle(duty_ratio)
 
     def set_light(self, r, g, b, brightness=None):
         """Set LED.
