@@ -62,16 +62,18 @@ try:
         state = get_cpu_temp()
         t = time.time()
 
-        duty_ratio = controller.next(t, state)
-        fanshim.set_fan_pwm(duty_ratio)
+        desired_ratio = controller.next(t, state)
+        duty_ratio = min(100.0, max(0.0, desired_ratio))
 
         # TODO Export these metrics to be scraped by Prometheus
         if iteration % 10 == 0:
             print(
                 "Current: {:05.02f} "
                 "Target: {:05.02f} "
-                "Duty ratio: {}".format(state, args.target, duty_ratio)
+                "Duty ratio: {} (want {})"
+                .format(state, args.target, duty_ratio, desired_ratio)
             )
+        fanshim.set_fan_pwm(duty_ratio)
 
         iteration += 1
         time.sleep(args.rate)
