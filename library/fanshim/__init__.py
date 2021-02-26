@@ -31,7 +31,8 @@ class FanShim():
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self._pin_fancontrol, GPIO.OUT)
 
-        self._pwm = GPIO.PWM(self._pin_fancontrol, 100)
+        self._pwm = GPIO.PWM(self._pin_fancontrol, 200)
+        self._pwm.start(0)
 
         if not self._disable_button:
             GPIO.setup(self._pin_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -144,8 +145,9 @@ class FanShim():
 
     def _cleanup(self):
         self.stop_polling()
-
+        self._pwm.stop()
         self.set_light(0, 0, 0)
+        GPIO.cleanup()
 
     def _run(self):
         self._running = True
