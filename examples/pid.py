@@ -75,6 +75,7 @@ try:
             )
             sys.stdout.flush()
         fanshim.set_fan_pwm(duty_ratio)
+        fanshim.set_light(0, 255, 0, duty_ratio)
 
         iteration += 1
         time.sleep(args.rate)

@@ -31,14 +31,14 @@ class FanShim():
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self._pin_fancontrol, GPIO.OUT)
 
-        self._pwm = GPIO.PWM(self._pin_fancontrol, 200)
+        self._pwm = GPIO.PWM(self._pin_fancontrol, 10)
         self._pwm.start(0)
 
         if not self._disable_button:
             GPIO.setup(self._pin_button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
         if not self._disable_led:
-            self._led = apa102.APA102(1, 15, 14, None, brightness=0.05)
+            self._led = apa102.APA102(1, 15, 14, None, brightness=0.0)
 
         atexit.register(self._cleanup)
 
