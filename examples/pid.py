@@ -73,6 +73,7 @@ try:
                 "Duty ratio: {} (want {})"
                 .format(state, args.target, duty_ratio, desired_ratio)
             )
+            sys.stdout.flush()
         fanshim.set_fan_pwm(duty_ratio)
 
         iteration += 1
