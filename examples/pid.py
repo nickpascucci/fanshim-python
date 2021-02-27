@@ -64,17 +64,21 @@ try:
 
         desired_ratio = controller.next(t, state)
         duty_ratio = min(100.0, max(0.0, desired_ratio))
+        # Adjust the duty ratio to be between 80-100 so that the fan will
+        # actually move. Low duty ratios cause the fan to wiggle but not spin.
+        adjusted_ratio = (duty_ratio / 5) + 80.0
 
         # TODO Export these metrics to be scraped by Prometheus
         if iteration % 10 == 0:
             print(
                 "Current: {:05.02f} "
                 "Target: {:05.02f} "
-                "Duty ratio: {} (want {})"
-                .format(state, args.target, duty_ratio, desired_ratio)
+                "Duty ratio: {} (from {}, want {})".format(
+                    state, args.target, adjusted_ratio, duty_ratio, desired_ratio
+                )
             )
             sys.stdout.flush()
-        fanshim.set_fan_pwm(duty_ratio)
+        fanshim.set_fan_pwm(adjusted_ratio)
         fanshim.set_light(0, 255, 0, duty_ratio)
 
         iteration += 1
